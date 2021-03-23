@@ -118,14 +118,25 @@
         .style('font-size', '15px')
         .style('font-family', 'Arial');
 
-      svg.append("line")
+      let text = svg.append("text")
+        .text("This dotted line represents when male and female mean life expectency are equal")
+        .attr('x', 130)
+        .attr('y', 500)
+        .attr('text-anchor', 'left')
+        .attr('dominant-baseline', 'Hanging')
+        .style('font-size', '10px')
+        .style('font-family', 'Arial')
+
+
+      let dottedLine = svg.append("line")
         .attr('x1', margin.left)
         .attr('y1', chartHeight + margin.top)
         .attr('x2', chartWidth + margin.left)
         .attr('y2', margin.top)
         .style('stroke', 'grey')
         .style("stroke-dasharray", ("3, 3"))
-        .style('stroke-width', 3);
+        .style('stroke-width', 3)
+
 
       let circles = chartArea.selectAll("circle").data(data)
         .join("circle")
