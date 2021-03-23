@@ -1,5 +1,8 @@
 <html>
+
 <head>
+
+  <br>
   <script src="https://d3js.org/d3.v6.min.js">
   </script>
   <style>
@@ -14,93 +17,134 @@
     .gridlines .domain {
       stroke: none;
     }
-
   </style>
 </head>
 
-  <body>
-    <svg id="p" height="500" width="500">
-    </svg>
-    <div id="scatterLegend" class="legend"> </div>
-          <script>
-            const svg = d3.select("svg#p");
-            const width = svg.attr("width");
-            const height = svg.attr("height");
-            const margin = {top: 10, right: 10, bottom: 40, left: 60};
-            const chartWidth = width - margin.left - margin.right;
-            const chartHeight = height - margin.top - margin.bottom;
+<body>
+  <svg id="p" height="600" width="600">
+  </svg>
+  <div id="scatterLegend" class="legend"> </div>
+  <script>
+    const svg = d3.select("svg#p");
+    const width = svg.attr("width");
+    const height = svg.attr("height");
+    const margin = { top: 50, right: 50, bottom: 50, left: 50 };
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
 
-            d3.csv("AEM3100.csv", d3.autoType).then( (data) => {
-              data.forEach((item, i) => {
-                if(item['Region Code']===1) {
-                  item['Region Code'] = "Africa";
-                } else if(item['Region Code']===2) {
-                  item['Region Code'] = "Asia";
-                } else if(item['Region Code']===3) {
-                  item['Region Code'] = "Europe";
-                } else if(item['Region Code']===4) {
-                  item['Region Code'] = "North America";
-                } else if(item['Region Code']===5) {
-                  item['Region Code'] = "Oceania";
-                } else if(item['Region Code']===6) {
-                  item['Region Code'] = "South America";
-                }
-              });
+    d3.csv("AEM3100.csv", d3.autoType).then((data) => {
+      data.forEach((item, i) => {
+        if (item['Region Code'] === 1) {
+          item['Region Code'] = "Africa";
+        } else if (item['Region Code'] === 2) {
+          item['Region Code'] = "Asia";
+        } else if (item['Region Code'] === 3) {
+          item['Region Code'] = "Europe";
+        } else if (item['Region Code'] === 4) {
+          item['Region Code'] = "North America";
+        } else if (item['Region Code'] === 5) {
+          item['Region Code'] = "Oceania";
+        } else if (item['Region Code'] === 6) {
+          item['Region Code'] = "South America";
+        }
+      });
 
-              console.log(data);
-              const extentFemale = d3.extent(data, d => d['Life Expectancy for Females']);
-              const femaleScale = d3.scaleLinear().domain(extentFemale).range([chartHeight, 0]);
-              const extentMale = d3.extent(data, d => d['Life Expectancy for Males']);
-              const maleScale = d3.scaleLinear().domain(extentMale).range([0, chartWidth]);
-              const genreScale = d3.scaleOrdinal(d3.schemeCategory10);
-
-              const annotations = svg.append("g").attr("id","annotations");
-              const chartArea = svg.append("g").attr("id","points")
-                              .attr("transform","translate("+margin.left+","+margin.top+")");
-              let bottomAxis = d3.axisBottom(maleScale)
-                                 .tickFormat(d3.format("~f"));
-              let leftAxis = d3.axisLeft(femaleScale)
-                               .tickFormat(d3.format("~f"));
-              let bottomGridlines = d3.axisBottom(maleScale)
-                                      .tickSize(-chartHeight-10)
-                                      .tickFormat("");
-              let leftGridlines = d3.axisLeft(femaleScale)
-                                    .tickSize(-chartWidth-10)
-                                    .tickFormat("");
-              annotations.append("g")
-                         .attr("class", "x axis")
-                         .attr("transform","translate("+margin.left+","+(chartHeight+margin.top+10)+")")
-                         .call(bottomAxis);
-              annotations.append("g")
-                         .attr("class", "y axis")
-                         .attr("transform","translate("+(margin.left-10)+","+margin.top+")")
-                        .call(leftAxis);
-              annotations.append("g")
-                         .attr("class", "y gridlines")
-                         .attr("transform","translate("+(margin.left-10)+","+margin.top+")")
-                         .call(leftGridlines);
-              annotations.append("g")
-                         .attr("class", "x gridlines")
-                         .attr("transform","translate("+margin.left+","+(chartHeight+margin.top+10)+")")
-                         .call(bottomGridlines);
+      console.log(data);
+      const extentFemale = d3.extent(data, d => d['Life Expectancy for Females']);
+      const extentMale = d3.extent(data, d => d['Life Expectancy for Males']);
+      const extentAge = [Math.min(extentFemale[0], extentMale[0]), Math.max(extentFemale[1], extentMale[1])]
 
 
-              let circles = chartArea.selectAll("circle").data(data)
-                                     .join("circle")
-                                     .attr("cx", d => maleScale(d['Life Expectancy for Males']))
-                                     .attr("cy", d => femaleScale(d['Life Expectancy for Females']))
-                                     .attr("r", 6)
-                                     .style("fill", d=> genreScale(d['Region Code']))
-                                     .attr("opacity", 0.8);
 
-              genreScale.domain().forEach( function(d,i) {
-                d3.select("#scatterLegend")
-                  .append("span")
-                  .text(d)
-                  .style("color", genreScale(d) )
-                });
+      const femaleScale = d3.scaleLinear().domain(extentAge).range([chartHeight, 0]);
 
-            });
-          </script>
-  </body>
+      const maleScale = d3.scaleLinear().domain(extentAge).range([0, chartWidth]);
+      const genreScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+      const annotations = svg.append("g").attr("id", "annotations");
+      const chartArea = svg.append("g").attr("id", "points")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      let bottomAxis = d3.axisBottom(maleScale)
+        .tickFormat(d3.format("~f"));
+      let leftAxis = d3.axisLeft(femaleScale)
+        .tickFormat(d3.format("~f"));
+      let bottomGridlines = d3.axisBottom(maleScale)
+        .tickSize(-chartHeight - 10)
+        .tickFormat("");
+      let leftGridlines = d3.axisLeft(femaleScale)
+        .tickSize(-chartWidth - 10)
+        .tickFormat("");
+      annotations.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(" + margin.left + "," + (chartHeight + margin.top + 10) + ")")
+        .call(bottomAxis);
+      annotations.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(" + (margin.left - 10) + "," + margin.top + ")")
+        .call(leftAxis);
+      annotations.append("g")
+        .attr("class", "y gridlines")
+        .attr("transform", "translate(" + (margin.left - 10) + "," + margin.top + ")")
+        .call(leftGridlines);
+      annotations.append("g")
+        .attr("class", "x gridlines")
+        .attr("transform", "translate(" + margin.left + "," + (chartHeight + margin.top + 10) + ")")
+        .call(bottomGridlines);
+
+      svg.append("text")
+        .text("Mean Life Expectancy of Males and Females in Different Countries")
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('text-anchor', 'left')
+        .attr('dominant-baseline', 'Hanging')
+        .style('font-size', '20px')
+        .style('font-family', 'Arial');
+
+      svg.append("text")
+        .text("Female Mean Life Expectancy")
+        .attr('x', 10)
+        .attr('y', margin.top - 10)
+        .attr('text-anchor', 'left')
+        .attr('dominant-baseline', 'Auto')
+        .style('font-size', '15px')
+        .style('font-family', 'Arial');
+
+      svg.append("text")
+        .text("Male Mean Life Expectancy")
+        .attr('x', chartWidth - margin.left - margin.right - 10)
+        .attr('y', chartHeight + margin.bottom + 30)
+        .attr('text-anchor', 'right')
+        .attr('dominant-baseline', 'Hanging')
+        .style('font-size', '15px')
+        .style('font-family', 'Arial');
+
+      svg.append("line")
+        .attr('x1', margin.left)
+        .attr('y1', chartHeight + margin.top)
+        .attr('x2', chartWidth + margin.left)
+        .attr('y2', margin.top)
+        .style('stroke', 'grey')
+        .style("stroke-dasharray", ("3, 3"))
+        .style('stroke-width', 3);
+
+      let circles = chartArea.selectAll("circle").data(data)
+        .join("circle")
+        .attr("cx", d => maleScale(d['Life Expectancy for Males']))
+        .attr("cy", d => femaleScale(d['Life Expectancy for Females']))
+        .attr("r", 5)
+        .style("fill", d => genreScale(d['Region Code']))
+        .attr("opacity", 0.8)
+        .raise();
+
+      genreScale.domain().forEach(function (d, i) {
+        d3.select("#scatterLegend")
+          .append("span")
+          .text(d)
+          .style("color", genreScale(d))
+      });
+
+    });
+  </script>
+</body>
+
 </html>
