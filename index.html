@@ -49,7 +49,6 @@
         }
       });
 
-      console.log(data);
       const extentFemale = d3.extent(data, d => d['Life Expectancy for Females']);
       const extentMale = d3.extent(data, d => d['Life Expectancy for Males']);
       const extentAge = [Math.min(extentFemale[0], extentMale[0]), Math.max(extentFemale[1], extentMale[1])]
@@ -101,7 +100,7 @@
         .style('font-family', 'calibri, sans-serif')
 
       svg.append("text")
-        .text("Mean Female Life Expectancy")
+        .text("Mean Female Life Expectancy (years)")
         .attr('x', 10)
         .attr('y', margin.top - 10)
         .attr('text-anchor', 'left')
@@ -110,8 +109,8 @@
         .style('font-family', 'calibri, sans-serif')
 
       svg.append("text")
-        .text("Mean Male Life Expectancy")
-        .attr('x', chartWidth - margin.left - margin.right - 10)
+        .text("Mean Male Life Expectancy (years)")
+        .attr('x', chartWidth - margin.left - margin.right - 50)
         .attr('y', chartHeight + margin.bottom + 30)
         .attr('text-anchor', 'right')
         .attr('dominant-baseline', 'Hanging')
