@@ -3,7 +3,8 @@
 <head>
 
   <br>
-  <script src="https://d3js.org/d3.v6.min.js">
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script src="https://d3js.org/topojson.v2.min.js"></script>
   </script>
   <style>
     .legend span {
@@ -17,6 +18,45 @@
     .gridlines .domain {
       stroke: none;
     }
+    .country {
+      fill: lightgrey;
+    }
+    .outline {
+      stroke: grey;
+      stroke-width: 1px;
+      fill: none;
+    }
+    .my-legend .legend-title {
+  text-align: left;
+  margin-bottom: 8px;
+  font-weight: bold;
+  font-size: 90%;
+  }
+.my-legend .legend-scale ul {
+  margin: 0;
+  padding: 0;
+  float: left;
+  list-style: none;
+  }
+.my-legend .legend-scale ul li {
+  display: block;
+  float: left;
+  width: 142px;
+  margin-bottom: 6px;
+  text-align: center;
+  font-size: 80%;
+  list-style: none;
+  }
+.my-legend ul.legend-labels li span {
+  display: block;
+  float: left;
+  height: 30px;
+  width: 142px;
+  }
+
+.my-legend a {
+  color: #777;
+  }
   </style>
 </head>
 
@@ -51,7 +91,7 @@
 
       const extentFemale = d3.extent(data, d => d['Life Expectancy for Females']);
       const extentMale = d3.extent(data, d => d['Life Expectancy for Males']);
-      const extentAge = [Math.min(extentFemale[0], extentMale[0]), Math.max(extentFemale[1], extentMale[1])]
+      const extentAge = [Math.min(extentFemale[0], extentMale[0]), Math.max(extentFemale[1], extentMale[1])];
 
 
 
@@ -157,6 +197,101 @@
 
     });
   </script>
+  <svg id="p2" height="800" width="1000">
+  </svg>
+  <div class='my-legend'>
+  <div class='legend-title'>Life Expectancy for Males in years</div>
+  <div class='legend-scale'>
+  <ul class='legend-labels'>
+    <li><span style='background:lightgrey;'></span>no data</li>
+    <li><span style='background:#5DADE2;'></span>0 - 50</li>
+    <li><span style='background:#3498DB;'></span>51 - 57</li>
+    <li><span style='background:#2E86C1;'></span>58 - 65</li>
+    <li><span style='background:#2874A6;'></span>66 - 74</li>
+    <li><span style='background:#21618C;'></span>74 - 80</li>
+    <li><span style='background:#154360;'></span> >80 </li>
+
+  </ul>
+</div>
+</div>
+  <svg id="p3" height="800" width="1000">
+  </svg>
+  <script>
+  const worldsvgMale = d3.select("svg#p2");
+  const worldsvgFeale = d3.select("svg#p3");
+  const worldwidth = worldsvgMale.attr("width");
+  const worldheight = worldsvgMale.attr("height");
+  const worldmargin = { top: 20, right: 20, bottom: 20, left:20};
+  const mapWidth = width - worldmargin.left - worldmargin.right;
+  const mapHeight = height - worldmargin.top - worldmargin.bottom;
+  const mapMale = worldsvgMale.append("g")
+                  .attr("transform","translate("+worldmargin.left+","+worldmargin.top+")");
+  const mapFemale = worldsvgFeale.append("g")
+                  .attr("transform","translate("+worldmargin.left+","+worldmargin.top+")");
+
+  const requestData = async function(maleOrFemal, graph) {
+
+    const world = await d3.json("world-topo.json");
+    console.log(world);
+    var country = topojson.feature(world, world.objects.countries);
+    var countryMesh = topojson.mesh(world, world.objects.countries);
+    var projection = d3.geoEquirectangular()
+            .scale(worldwidth / 1.5 / Math.PI)
+            .rotate([0, 0])
+            .center([0, 0])
+            .translate([worldwidth / 2, worldheight / 2])
+    var path = d3.geoPath().projection(projection);
+
+    graph.selectAll("path")
+       .data( country.features)
+       .enter()
+       .append("path")
+       .attr( "d", path )
+       .attr("class","country")
+       .attr("note", d => d.properties.admin);
+
+    graph.append("path").datum(countryMesh)
+       .attr("class","outline")
+       .attr("d", path);
+
+    var dataTocountry = {};
+    var lifeData = await d3.csv("AEM3100.csv", d3.autoType);
+    lifeData.forEach((item, i) => {
+      dataTocountry[item['Country Name']] = item[maleOrFemal]
+    });
+
+    const extentf = d3.extent(lifeData, d => d['Life Expectancy for Females']);
+    const extentm = d3.extent(lifeData, d => d['Life Expectancy for Males']);
+    const extentTotal = [Math.min(extentf[0], extentm[0]), Math.max(extentf[1], extentm[1])];
+    const avg = (extentTotal[1]-extentTotal[0])/5;
+    console.log(extentTotal);
+    const colorScale = d3.scaleThreshold()
+    .domain([50,57,65,73,80])
+    .range(["#5DADE2", "#3498DB","#2E86C1 ","#2874A6","#21618C",'#154360']);
+
+    graph.selectAll(".country")
+       .style("fill", d => colorScale( dataTocountry[d.properties.admin]) );
+
+  };
+  requestData('Life Expectancy for Males',mapMale);
+  requestData('Life Expectancy for Females',mapFemale);
+
+  </script>
+  <div class='my-legend'>
+  <div class='legend-title'>Life Expectancy for Females in years</div>
+  <div class='legend-scale'>
+  <ul class='legend-labels'>
+    <li><span style='background:lightgrey;'></span>no data</li>
+    <li><span style='background:#5DADE2;'></span>0 - 50</li>
+    <li><span style='background:#3498DB;'></span>51 - 57</li>
+    <li><span style='background:#2E86C1;'></span>58 - 65</li>
+    <li><span style='background:#2874A6;'></span>66 - 74</li>
+    <li><span style='background:#21618C;'></span>74 - 80</li>
+    <li><span style='background:#154360;'></span> >80 </li>
+
+  </ul>
+</div>
+</div>
 </body>
 
 </html>
