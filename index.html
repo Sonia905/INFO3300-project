@@ -94,38 +94,39 @@
       svg.append("text")
         .text("Mean Life Expectancy of Males and Females in Different Countries")
         .attr('x', 0)
-        .attr('y', 0)
+        .attr('y', 5)
         .attr('text-anchor', 'left')
         .attr('dominant-baseline', 'Hanging')
         .style('font-size', '20px')
-        .style('font-family', 'Arial');
+        .style('font-family', 'calibri, sans-serif')
 
       svg.append("text")
-        .text("Female Mean Life Expectancy")
+        .text("Mean Female Life Expectancy")
         .attr('x', 10)
         .attr('y', margin.top - 10)
         .attr('text-anchor', 'left')
         .attr('dominant-baseline', 'Auto')
         .style('font-size', '15px')
-        .style('font-family', 'Arial');
+        .style('font-family', 'calibri, sans-serif')
 
       svg.append("text")
-        .text("Male Mean Life Expectancy")
+        .text("Mean Male Life Expectancy")
         .attr('x', chartWidth - margin.left - margin.right - 10)
         .attr('y', chartHeight + margin.bottom + 30)
         .attr('text-anchor', 'right')
         .attr('dominant-baseline', 'Hanging')
         .style('font-size', '15px')
-        .style('font-family', 'Arial');
+        .style('font-family', 'calibri, sans-serif')
 
       let text = svg.append("text")
-        .text("This dotted line represents when male and female mean life expectency are equal")
+        // .text("This dotted line represents when male and female mean life expectency are equal")
+        .text("This dotted line shows a one to one relationship between male and female life expectancies")
         .attr('x', 130)
         .attr('y', 500)
         .attr('text-anchor', 'left')
         .attr('dominant-baseline', 'Hanging')
         .style('font-size', '10px')
-        .style('font-family', 'Arial')
+        .style('font-family', 'calibri, sans-serif')
 
 
       let dottedLine = svg.append("line")
@@ -151,6 +152,7 @@
         d3.select("#scatterLegend")
           .append("span")
           .text(d)
+          .style('font-family', 'calibri, sans-serif')
           .style("color", genreScale(d))
       });
 
