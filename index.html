@@ -202,7 +202,7 @@
   <div class='my-legend'>
   <div class='legend-title'>Life Expectancy for Males in years</div>
   <div class='legend-scale'>
-  <ul class='legend-labels'>
+  <!-- <ul class='legend-labels'>
     <li><span style='background:lightgrey;'></span>no data</li>
     <li><span style='background:#5DADE2;'></span>0 - 50</li>
     <li><span style='background:#3498DB;'></span>51 - 57</li>
@@ -210,6 +210,16 @@
     <li><span style='background:#2874A6;'></span>66 - 74</li>
     <li><span style='background:#21618C;'></span>74 - 80</li>
     <li><span style='background:#154360;'></span> >80 </li>
+
+  </ul> -->
+  <ul class='legend-labels'>
+    <li><span style='background:lightgrey;'></span>no data</li>
+    <li><span style='background:#a50f15;'></span>0 - 50</li>
+    <li><span style='background:#de2d26;'></span>51 - 57</li>
+    <li><span style='background:#fb6a4a;'></span>58 - 65</li>
+    <li><span style='background:#fc9272;'></span>66 - 74</li>
+    <li><span style='background:#fcbba1;'></span>74 - 80</li>
+    <li><span style='background:#fee5d9;'></span> >80 </li>
 
   </ul>
 </div>
@@ -267,7 +277,8 @@
     console.log(extentTotal);
     const colorScale = d3.scaleThreshold()
     .domain([50,57,65,73,80])
-    .range(["#5DADE2", "#3498DB","#2E86C1 ","#2874A6","#21618C",'#154360']);
+    // .range(["#5DADE2", "#3498DB","#2E86C1 ","#2874A6","#21618C",'#154360']);
+    .range(['#a50f15','#de2d26','#fb6a4a','#fc9272','#fcbba1','#fee5d9']);
 
     graph.selectAll(".country")
        .style("fill", d => colorScale( dataTocountry[d.properties.admin]) );
@@ -280,7 +291,7 @@
   <div class='my-legend'>
   <div class='legend-title'>Life Expectancy for Females in years</div>
   <div class='legend-scale'>
-  <ul class='legend-labels'>
+  <!-- <ul class='legend-labels'>
     <li><span style='background:lightgrey;'></span>no data</li>
     <li><span style='background:#5DADE2;'></span>0 - 50</li>
     <li><span style='background:#3498DB;'></span>51 - 57</li>
@@ -288,6 +299,17 @@
     <li><span style='background:#2874A6;'></span>66 - 74</li>
     <li><span style='background:#21618C;'></span>74 - 80</li>
     <li><span style='background:#154360;'></span> >80 </li>
+
+  </ul> -->
+
+  <ul class='legend-labels'>
+    <li><span style='background:lightgrey;'></span>no data</li>
+    <li><span style='background:#a50f15;'></span>0 - 50</li>
+    <li><span style='background:#de2d26;'></span>51 - 57</li>
+    <li><span style='background:#fb6a4a;'></span>58 - 65</li>
+    <li><span style='background:#fc9272;'></span>66 - 74</li>
+    <li><span style='background:#fcbba1;'></span>74 - 80</li>
+    <li><span style='background:#fee5d9;'></span> >80 </li>
 
   </ul>
 </div>
